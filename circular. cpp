@@ -1,0 +1,149 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for circular linked list
+struct Node {
+    int data;       // Stores the value
+    Node* next;     // Points to the next node
+
+    Node(int val) { // Constructor to initialize a new node
+        data = val;
+        next = nullptr;
+    }
+};
+
+class CircularLinkedList {
+private:
+    Node* tail; // Points to the last node in the list
+
+public:
+    // Constructor
+    CircularLinkedList() {
+        tail = nullptr;
+    }
+
+    // Insert at the beginning
+    void insertAtBeginning(int val) {
+        Node* newNode = new Node(val);
+
+        if (tail == nullptr) { // If the list is empty
+            tail = newNode;
+            tail->next = tail; // Make it circular
+        } else {
+            newNode->next = tail->next; // Point new node to the first node
+            tail->next = newNode;       // Update tail to point to the new node
+        }
+    }
+
+    // Insert at the end
+    void insertAtEnd(int val) {
+        Node* newNode = new Node(val);
+
+        if (tail == nullptr) { // If the list is empty
+            tail = newNode;
+            tail->next = tail; // Make it circular
+        } else {
+            newNode->next = tail->next; // Point new node to the first node
+            tail->next = newNode;       // Update tail's next
+            tail = newNode;             // Make the new node the tail
+        }
+    }
+
+    // Delete a node with a specific value
+    void deleteNode(int val) {
+        if (tail == nullptr) { // If the list is empty
+            cout << "List is empty. Nothing to delete." << endl;
+            return;
+        }
+
+        Node* curr = tail->next; // Start from the first node
+        Node* prev = tail;
+
+        // Traverse the list to find the node
+        do {
+            if (curr->data == val) {
+                if (curr == tail && curr->next == tail) { // Only one node in the list
+                    tail = nullptr;
+                } else {
+                    prev->next = curr->next;
+                    if (curr == tail) {
+                        tail = prev; // Update tail if the node to be deleted is tail
+                    }
+                }
+                delete curr;
+                cout << "Node with value " << val << " deleted." << endl;
+                return;
+            }
+            prev = curr;
+            curr = curr->next;
+        } while (curr != tail->next);
+
+        cout << "Value not found in the list." << endl;
+    }
+
+    // Display the list
+    void display() {
+        if (tail == nullptr) {
+            cout << "List is empty." << endl;
+            return;
+        }
+
+        Node* temp = tail->next; // Start from the first node
+        cout << "Current List: ";
+        do {
+            cout << temp->data << " ";
+            temp = temp->next;
+        } while (temp != tail->next); // Stop when we come back to the first node
+        cout << endl;
+    }
+};
+
+// Main function with menu-driven interface
+int main() {
+    CircularLinkedList list;
+    int choice, value;
+
+    do {
+        cout << "\nMenu:" << endl;
+        cout << "1. Insert at the beginning" << endl;
+        cout << "2. Insert at the end" << endl;
+        cout << "3. Delete a node" << endl;
+        cout << "4. Display the list" << endl;
+        cout << "5. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter value to insert at the beginning: ";
+            cin >> value;
+            list.insertAtBeginning(value);
+            break;
+
+        case 2:
+            cout << "Enter value to insert at the end: ";
+            cin >> value;
+            list.insertAtEnd(value);
+            break;
+
+        case 3:
+            cout << "Enter value to delete: ";
+            cin >> value;
+            list.deleteNode(value);
+            break;
+
+        case 4:
+            list.display();
+            break;
+
+        case 5:
+            cout << "Exiting..." << endl;
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
